@@ -1,4 +1,4 @@
-all: fmt vet lint test
+all: fmt vet lint
 
 # Run go fmt against code
 fmt:
@@ -11,7 +11,3 @@ vet:
 # Run the linter against code
 lint:
 	golangci-lint run -v
-
-# Run tests
-test:
-	@go test ./... -coverprofile cover.out
