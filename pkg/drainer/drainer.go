@@ -4,6 +4,7 @@ package drainer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"time"
@@ -54,7 +55,7 @@ func (d *Drainer) Drain(
 	ctx context.Context,
 	selector map[string]string,
 	olderThan time.Duration,
-	nodeCount int,
+	nodeCount, maxUnscheduledPods int,
 ) error {
 	// Compute selector
 	s := labels.SelectorFromSet(selector).String()
@@ -82,21 +83,6 @@ func (d *Drainer) Drain(
 	// Sort nodes by descending creation timestamp
 	sort.Sort(ByCreationTimestampDescending(nodes))
 
-	// List pods with status not Running and not Succeeded
-	// We do not perform drain if some pods don't match the status
-	d.Log.V(1).Info("Listing non running / succeeded pods")
-	podsList, err := d.Cli.CoreV1().Pods("").List(ctx, metav1.ListOptions{
-		FieldSelector: "status.phase!=" + string(corev1.PodRunning) + ",status.phase!=" + string(corev1.PodSucceeded),
-	})
-	if err != nil {
-		d.Log.Error(err, "Failed to list non running / succeeded pods")
-		return err
-	}
-	if len(podsList.Items) > 0 {
-		d.Log.Info("Aborting drain process, pods not ready", "count", len(podsList.Items))
-		return nil
-	}
-
 	count := 0
 	notReady := 0
 	notOldEnough := 0
@@ -115,10 +101,26 @@ func (d *Drainer) Drain(
 		// Matching node to drain
 		// Drain only nodes that are ready and Schedulable
 		if isNodeReady(n) && !n.Spec.Unschedulable {
+			// List unscheduled pods on first node drain
+			// We do not perform drain if some pods don't match the status
+			if count == 0 {
+				d.Log.V(1).Info("Listing unscheduled pods")
+				podsList, err := d.Cli.CoreV1().Pods("").List(ctx, metav1.ListOptions{
+					FieldSelector: "spec.nodeName=",
+				})
+				if err != nil {
+					d.Log.Error(err, "Failed to list unscheduled pods")
+					return err
+				}
+				if len(podsList.Items) > maxUnscheduledPods {
+					err := errors.New("too much unscheduled pods")
+					d.Log.Error(err, "Aborting drain process", "count", len(podsList.Items), "max", maxUnscheduledPods)
+					return err
+				}
+			}
+
 			d.Log.Info("Draining node", "node", n.Name)
-			err := d.drainNode(ctx, &n)
-			// Failed to drain node, return immediatly
-			if err != nil {
+			if err := d.drainNode(ctx, &n); err != nil {
 				return err
 			}
 
