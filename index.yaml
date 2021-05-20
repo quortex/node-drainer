@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  node-drainer:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2021-05-20T12:14:30.367922256Z"
+    description: A cronjob that drain nodes periodically.
+    digest: c026af8a55c118437302eabe35332b5cbb10d74b10400ad2544df47b8eb276a3
+    name: node-drainer
+    type: application
+    urls:
+    - https://github.com/quortex/node-drainer/releases/download/node-drainer-chart-0.1.0/node-drainer-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-05-20T12:14:30.367926756Z"
