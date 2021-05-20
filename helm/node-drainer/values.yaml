@@ -26,7 +26,7 @@ backoffLimit: 6
 # -- The number of successful finished jobs to retain.
 successfulJobsHistoryLimit: 3
 
-# -- The number of failed finished jobs to retain. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1.
+# -- The number of failed finished jobs to retain.
 failedJobsHistoryLimit: 1
 
 # -- This flag tells the controller to suspend subsequent executions, it does not apply to already started executions.
