@@ -1,0 +1,85 @@
+# Default values for node-drainer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+schedule: "0 0 * * *"
+
+# -- Selector to list the nodes to drain (matching labels).
+selector: {}
+
+# -- The minimum lifespan that a node must have to be drained.
+olderThan: 8h
+
+# -- The number of nodes to drain.
+count: 1
+
+# -- The maximum number of unscheduled pods on the cluster beyond which the drain will fail.
+maxUnscheduledPods: 0
+
+# -- Specifies how to treat concurrent executions of a Job (Allow / Forbid / Replace).
+concurrencyPolicy: Allow
+
+# -- Specifies the number of retries before marking a job as failed.
+backoffLimit: 6
+
+# -- The number of successful finished jobs to retain.
+successfulJobsHistoryLimit: 3
+
+# -- The number of failed finished jobs to retain. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1.
+failedJobsHistoryLimit: 1
+
+# -- This flag tells the controller to suspend subsequent executions, it does not apply to already started executions.
+suspend: false
+
+# -- The timeout in seconds for pods eviction during node drain
+evictionTimeout: 300
+logs:
+  # -- Logs verbosity:
+  #
+  #  0 => panic
+  #  1 => error
+  #  2 => warning
+  #  3 => info
+  #  4 => debug
+  verbosity: 3
+  enableDevLogs: false
+
+image:
+  # -- node-drainer image repository.
+  repository: eu.gcr.io/quortex-registry-public/node-drainer
+  # -- node-drainer image tag.
+  tag: 0.1.0
+  # -- node-drainer image pull policy.
+  pullPolicy: IfNotPresent
+
+rbac:
+  # Specifies whether rbac resources should be created.
+  create: true
+
+# --  node-drainer restartPolicy (supported values: "OnFailure", "Never").
+restartPolicy: OnFailure
+
+# --  A list of secrets used to pull containers images.
+imagePullSecrets: []
+
+# --  Helm's name computing override.
+nameOverride: ""
+
+# --  Helm's fullname computing override.
+fullnameOverride: ""
+
+# -- node-drainer container required resources.
+resources: {}
+
+# --  Annotations to be added to pods.
+podAnnotations: {}
+
+# --  Node labels for node-drainer pod assignment.
+nodeSelector: {}
+
+# --  Node tolerations for node-drainer scheduling to nodes with taints.
+tolerations: []
+
+# --  Affinity for node-drainer pod assignment.
+affinity: {}
