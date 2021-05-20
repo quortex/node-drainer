@@ -32,7 +32,7 @@ func main() {
 	flag.BoolVar(&fEnableDevLogs, "dev", false, "Enable dev mode for logging.")
 	flag.IntVar(&fLogVerbosity, "v", 3, "Logs verbosity. 0 => panic, 1 => error, 2 => warning, 3 => info, 4 => debug")
 	flag.Var(cliflag.NewMapStringString(&fSelector), "l", "Selector to list the nodes to drain.")
-	flag.IntVar(&fEvictionGlobalTimeout, "eviction-timeout", 300, "The timeout in seconds for pods eviction on Instance deletion.")
+	flag.IntVar(&fEvictionGlobalTimeout, "eviction-timeout", 300, "The timeout in seconds for pods eviction during node drain.")
 	flag.DurationVar(&fOlderThan, "older-than", time.Hour*8, "The minimum lifespan that a node must have to be drained.")
 	flag.IntVar(&fCount, "count", 1, "The number of nodes to drain.")
 	flag.StringVar(&fKubeConfig, "kubeconfig", "", "(optional) absolute path to the kubeconfig file")

@@ -37,7 +37,7 @@ func isNodeReady(node corev1.Node) bool {
 	return false
 }
 
-// isNodeOlderThan if older than provided duration
+// isNodeOlderThan returns if the node is older than the provided duration
 func isNodeOlderThan(node corev1.Node, d time.Duration) bool {
 	return node.CreationTimestamp.Add(d).Before(time.Now())
 }
@@ -53,13 +53,8 @@ func filterPods(pods []corev1.Pod, filters ...PodFilter) []corev1.Pod {
 	return pods
 }
 
-// daemonSetFilter filter dameonsets pods
+// daemonSetFilter filters out dameonsets pods
 func (d *Drainer) daemonSetFilter(pods []corev1.Pod) []corev1.Pod {
-	// Note that we return false in cases where the pod is DaemonSet managed,
-	// regardless of flags.
-	//
-	// The exception is for pods that are orphaned (the referencing
-	// management resource - including DaemonSet - is not found).
 	for i := len(pods) - 1; i >= 0; i-- {
 		pod := pods[i]
 		controllerRef := metav1.GetControllerOf(&pod)
@@ -88,7 +83,7 @@ func (d *Drainer) daemonSetFilter(pods []corev1.Pod) []corev1.Pod {
 	return pods
 }
 
-// deletedFilter filter already deleted pods
+// deletedFilter filters out already deleted pods
 func deletedFilter(pods []corev1.Pod) []corev1.Pod {
 	for i := len(pods) - 1; i >= 0; i-- {
 		pod := pods[i]

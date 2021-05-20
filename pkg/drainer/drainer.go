@@ -60,14 +60,14 @@ func (d *Drainer) Drain(
 	s := labels.SelectorFromSet(selector).String()
 	d.Log.Info("Starting nodes draining process", "selector", s, "olderThan", olderThan, "nodeCount", nodeCount)
 
-	// If node count is invalid we return immediatly
+	// If node count is invalid we return immediately
 	if nodeCount <= 0 {
 		d.Log.Info("Aborting, no node to drain", "nodeCount", nodeCount)
 		return nil
 	}
 
 	// Get Nodes matching selctor
-	d.Log.V(1).Info("Listing nodes", "selector", s, "oderThan", olderThan)
+	d.Log.V(1).Info("Listing nodes", "selector", s, "olderThan", olderThan)
 	nodesList, err := d.Cli.CoreV1().Nodes().List(ctx, metav1.ListOptions{LabelSelector: s})
 	if err != nil {
 		d.Log.Error(err, "Failed to list nodes", "selector", s)
@@ -83,7 +83,7 @@ func (d *Drainer) Drain(
 	sort.Sort(ByCreationTimestampDescending(nodes))
 
 	// List pods with status not Running and not Succeeded
-	// We do not perform drain if some pods don't match thes status
+	// We do not perform drain if some pods don't match the status
 	d.Log.V(1).Info("Listing non running / succeeded pods")
 	podsList, err := d.Cli.CoreV1().Pods("").List(ctx, metav1.ListOptions{
 		FieldSelector: "status.phase!=" + string(corev1.PodRunning) + ",status.phase!=" + string(corev1.PodSucceeded),
@@ -103,7 +103,7 @@ func (d *Drainer) Drain(
 	// Iterate on nodes to drain the older ones matching rules
 	for i, n := range nodes {
 		if count >= nodeCount {
-			// All nodes have been drined, return immediatly
+			// Enough nodes have been drained, return immediately
 			return nil
 		}
 		if !isNodeOlderThan(n, olderThan) {
@@ -157,7 +157,7 @@ func (d *Drainer) drainNode(
 
 	// Evict pods
 	// We don't care about errors here.
-	// Either we can't process them or the eviction has timeout.
+	// Either we can't process them or the eviction has timed out.
 	d.Log.Info("Evicting pods", "node", nodeName)
 	if err := d.evictPods(ctx, nodeName, filterPods(podsList.Items, deletedFilter, d.daemonSetFilter)); err != nil {
 		d.Log.Error(err, "Failed to evict pods", "node", nodeName)
@@ -167,7 +167,7 @@ func (d *Drainer) drainNode(
 	return nil
 }
 
-// cordonNode cordon the given Node (mark it as unschedulable).
+// cordonNode cordons the given Node (mark it as unschedulable).
 func (d *Drainer) cordonNode(
 	ctx context.Context,
 	node *corev1.Node,
@@ -279,7 +279,7 @@ func (d *Drainer) evictPods(
 }
 
 // checkEvictionSupport uses Discovery API to find out if the server support
-// eviction subresource If support, it will return its groupVersion; Otherwise,
+// eviction subresource. If supported, it will return its groupVersion; Otherwise,
 // it will return an empty string.
 // This code is largely inspired by kubectl cli source code.
 func (d *Drainer) checkEvictionSupport() (string, error) {
