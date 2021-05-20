@@ -1,0 +1,20 @@
+# Checks are executed on each push
+
+name: Checks
+
+on: ["push"]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Instead of using our own CI, we uses https://golangci-lint.run/
+      # It combines 48 linters and execute them in parallel
+      - name: Lint with golangci-lint
+        uses: golangci/golangci-lint-action@v2.5.2
+        with:
+          version: v1.32
+          args: --timeout 5m
