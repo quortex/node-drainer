@@ -23,9 +23,9 @@ The node-drainer container takes as argument the parameters below.
 | count                | The number of nodes to drain.                                                                  | `1`     |
 | max-unscheduled-pods | The maximum number of unscheduled pods on the cluster beyond which the drain will fail.        | `0`     |
 | eviction-timeout     | The timeout in seconds for pods eviction during node drain.                                    | `300`   |
+| poll-interval        | The poll interval in seconds to check pods deletion on drain.                                  | `5`     |
 | dev                  | Enable dev mode for logging.                                                                   | `false` |
 | v                    | Logs verbosity. 0 => panic, 1 => error, 2 => warning, 3 => info, 4 => debug                    | 3       |
-| asg-poll-interval    | AutoScaling Groups polling interval (used to generate custom metrics about ASGs).              | 30      |
 
 
 ## Supervision
