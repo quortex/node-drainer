@@ -36,7 +36,7 @@ helm install node-drainer node-drainer/node-drainer -n <NAMESPACE>>
 | concurrencyPolicy | string | `"Allow"` | Specifies how to treat concurrent executions of a Job (Allow / Forbid / Replace). |
 | backoffLimit | int | `6` | Specifies the number of retries before marking a job as failed. |
 | successfulJobsHistoryLimit | int | `3` | The number of successful finished jobs to retain. |
-| failedJobsHistoryLimit | int | `1` | The number of failed finished jobs to retain. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1. |
+| failedJobsHistoryLimit | int | `1` | The number of failed finished jobs to retain. |
 | suspend | bool | `false` | This flag tells the controller to suspend subsequent executions, it does not apply to already started executions. |
 | evictionTimeout | int | `300` | The timeout in seconds for pods eviction during node drain |
 | logs.verbosity | int | `3` | Logs verbosity:  0 => panic  1 => error  2 => warning  3 => info  4 => debug |
