@@ -31,6 +31,9 @@ const (
 	pollInterval = time.Second
 )
 
+// ErrNoPodToEvict indicates that there's no pod to evict on the node.
+var ErrNoPodToEvict = errors.New("no pod to evict")
+
 // Configuration wraps Drainer configuration
 type Configuration struct {
 	EvictionGlobalTimeout int
@@ -86,6 +89,7 @@ func (d *Drainer) Drain(
 	count := 0
 	notReady := 0
 	notOldEnough := 0
+	aborted := 0
 	// Iterate on nodes to drain the older ones matching rules
 	for i, n := range nodes {
 		if count >= nodeCount {
@@ -99,8 +103,8 @@ func (d *Drainer) Drain(
 		}
 
 		// Matching node to drain
-		// Drain only nodes that are ready and Schedulable
-		if isNodeReady(n) && !n.Spec.Unschedulable {
+		// Drain only nodes that are ready
+		if isNodeReady(n) {
 			// List unscheduled pods on first node drain
 			// We do not perform drain if some pods don't match the status
 			if count == 0 {
@@ -119,8 +123,14 @@ func (d *Drainer) Drain(
 				}
 			}
 
+			// Try to drain nodes, if no pods to evict
+			// on that node, try the next one
 			d.Log.Info("Draining node", "node", n.Name)
 			if err := d.drainNode(ctx, &n); err != nil {
+				if errors.Is(err, ErrNoPodToEvict) {
+					aborted++
+					continue
+				}
 				return err
 			}
 
@@ -130,7 +140,7 @@ func (d *Drainer) Drain(
 		notReady++
 	}
 
-	d.Log.Info("No candidate for drain", "selector", s, "nodeCount", len(nodes), "notOldEnough", notOldEnough, "notReady", notReady)
+	d.Log.Info("No candidate for drain", "selector", s, "nodeCount", len(nodes), "notOldEnough", notOldEnough, "notReady", notReady, "aborted", aborted)
 
 	return nil
 }
@@ -140,12 +150,16 @@ func (d *Drainer) drainNode(
 	node *corev1.Node,
 ) error {
 	nodeName := node.Name
+
 	// First, we cordon the Node (set it as unschedulable)
-	d.Log.Info("Cordon node", "node", nodeName)
-	err := d.cordonNode(ctx, node)
-	if err != nil {
-		d.Log.Error(err, "Unable to cordon Node", "node", nodeName)
-		return err
+	// if it is not yet.
+	if !node.Spec.Unschedulable {
+		d.Log.Info("Cordon node", "node", nodeName)
+		err := d.cordonNode(ctx, node)
+		if err != nil {
+			d.Log.Error(err, "Unable to cordon Node", "node", nodeName)
+			return err
+		}
 	}
 
 	// Get pods scheduled on that Node
@@ -157,11 +171,18 @@ func (d *Drainer) drainNode(
 		return err
 	}
 
+	// Get pods to evict, if none, return a specific error.
+	pods := filterPods(podsList.Items, deletedFilter, d.daemonSetFilter)
+	if len(pods) == 0 {
+		d.Log.Info("No pods to evict, aborting drain", "node", nodeName)
+		return ErrNoPodToEvict
+	}
+
 	// Evict pods
 	// We don't care about errors here.
 	// Either we can't process them or the eviction has timed out.
 	d.Log.Info("Evicting pods", "node", nodeName)
-	if err := d.evictPods(ctx, nodeName, filterPods(podsList.Items, deletedFilter, d.daemonSetFilter)); err != nil {
+	if err := d.evictPods(ctx, nodeName, pods); err != nil {
 		d.Log.Error(err, "Failed to evict pods", "node", nodeName)
 		return err
 	}
