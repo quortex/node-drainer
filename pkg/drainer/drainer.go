@@ -27,8 +27,6 @@ const (
 	evictionKind = "Eviction"
 	// evictionSubresource represents the kind of evictions object as pod's subresource
 	evictionSubresource = "pods/eviction"
-	// The delete pod polling interval
-	pollInterval = time.Second
 )
 
 // ErrNoPodToEvict indicates that there's no pod to evict on the node.
@@ -37,6 +35,7 @@ var ErrNoPodToEvict = errors.New("no pod to evict")
 // Configuration wraps Drainer configuration
 type Configuration struct {
 	EvictionGlobalTimeout int
+	PollInterval          time.Duration
 	Cli                   *kubernetes.Clientset
 	Log                   logr.Logger
 }
@@ -379,7 +378,7 @@ func deleteTimeout(pods []corev1.Pod) time.Duration {
 // waitForDelete poll pods to check their deletion.
 // This code is largely inspired by kubectl cli source code.
 func (d *Drainer) waitForDelete(ctx context.Context, pods []corev1.Pod) ([]corev1.Pod, error) {
-	err := wait.PollImmediate(pollInterval, deleteTimeout(pods), func() (bool, error) {
+	err := wait.PollImmediate(d.PollInterval, deleteTimeout(pods), func() (bool, error) {
 		pendingPods := []corev1.Pod{}
 		for i, pod := range pods {
 			p, err := d.Cli.CoreV1().Pods(pod.Namespace).Get(ctx, pod.Name, metav1.GetOptions{})
