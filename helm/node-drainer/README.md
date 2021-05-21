@@ -1,6 +1,6 @@
 # node-drainer
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.0](https://img.shields.io/badge/AppVersion-0.2.0-informational?style=flat-square)
 
 A cronjob that drain nodes periodically.
 
@@ -38,7 +38,8 @@ helm install node-drainer node-drainer/node-drainer -n <NAMESPACE>>
 | successfulJobsHistoryLimit | int | `3` | The number of successful finished jobs to retain. |
 | failedJobsHistoryLimit | int | `1` | The number of failed finished jobs to retain. |
 | suspend | bool | `false` | This flag tells the controller to suspend subsequent executions, it does not apply to already started executions. |
-| evictionTimeout | int | `300` | The timeout in seconds for pods eviction during node drain |
+| evictionTimeout | int | `300` | The timeout in seconds for pods eviction during node drain. |
+| pollInterval | int | `5` | The poll interval in seconds to check pods deletion on drain. |
 | logs.verbosity | int | `3` | Logs verbosity:  0 => panic  1 => error  2 => warning  3 => info  4 => debug |
 | logs.enableDevLogs | bool | `false` |  |
 | image.repository | string | `"eu.gcr.io/quortex-registry-public/node-drainer"` | node-drainer image repository. |
