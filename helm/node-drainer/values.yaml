@@ -32,8 +32,12 @@ failedJobsHistoryLimit: 1
 # -- This flag tells the controller to suspend subsequent executions, it does not apply to already started executions.
 suspend: false
 
-# -- The timeout in seconds for pods eviction during node drain
+# -- The timeout in seconds for pods eviction during node drain.
 evictionTimeout: 300
+
+# -- The poll interval in seconds to check pods deletion on drain.
+pollInterval: 5
+
 logs:
   # -- Logs verbosity:
   #
@@ -49,7 +53,7 @@ image:
   # -- node-drainer image repository.
   repository: eu.gcr.io/quortex-registry-public/node-drainer
   # -- node-drainer image tag.
-  tag: 0.1.0
+  tag: 0.2.0
   # -- node-drainer image pull policy.
   pullPolicy: IfNotPresent
 

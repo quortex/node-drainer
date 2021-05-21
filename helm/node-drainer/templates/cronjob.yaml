@@ -43,6 +43,7 @@ spec:
                 - --count={{ .Values.count }}
                 - --max-unscheduled-pods={{ .Values.maxUnscheduledPods }}
                 - --eviction-timeout={{ .Values.evictionTimeout }}
+                - --poll-interval={{ .Values.pollInterval }}
                 - --dev={{ .Values.logs.enableDevLogs }}
                 - --v={{ .Values.logs.verbosity }}
               resources:
