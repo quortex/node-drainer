@@ -1,6 +1,6 @@
 # node-drainer
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.0](https://img.shields.io/badge/AppVersion-0.2.0-informational?style=flat-square)
+![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.1](https://img.shields.io/badge/AppVersion-0.2.1-informational?style=flat-square)
 
 A cronjob that drain nodes periodically.
 
@@ -43,7 +43,7 @@ helm install node-drainer node-drainer/node-drainer -n <NAMESPACE>>
 | logs.verbosity | int | `3` | Logs verbosity:  0 => panic  1 => error  2 => warning  3 => info  4 => debug |
 | logs.enableDevLogs | bool | `false` |  |
 | image.repository | string | `"eu.gcr.io/quortex-registry-public/node-drainer"` | node-drainer image repository. |
-| image.tag | string | `"0.1.0"` | node-drainer image tag. |
+| image.tag | string | `"0.2.1"` | node-drainer image tag. |
 | image.pullPolicy | string | `"IfNotPresent"` | node-drainer image pull policy. |
 | rbac.create | bool | `true` |  |
 | restartPolicy | string | `"OnFailure"` | node-drainer restartPolicy (supported values: "OnFailure", "Never"). |
