@@ -53,7 +53,7 @@ image:
   # -- node-drainer image repository.
   repository: eu.gcr.io/quortex-registry-public/node-drainer
   # -- node-drainer image tag.
-  tag: 0.2.0
+  tag: 0.2.1
   # -- node-drainer image pull policy.
   pullPolicy: IfNotPresent
 
