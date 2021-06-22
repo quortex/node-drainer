@@ -365,10 +365,12 @@ func deleteTimeout(pods []corev1.Pod) time.Duration {
 	// a 30sec overhead.
 	maxGrace := int64(30)
 	for _, e := range pods {
-		if grace := e.DeletionGracePeriodSeconds; grace != nil {
-			if *grace > maxGrace {
-				maxGrace = *grace
-			}
+		grace := e.DeletionGracePeriodSeconds
+		if grace == nil {
+			grace = e.Spec.TerminationGracePeriodSeconds
+		}
+		if grace != nil && *grace > maxGrace {
+			maxGrace = *grace
 		}
 	}
 
