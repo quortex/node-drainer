@@ -5,7 +5,7 @@ updates:
     directory: "/"
     target-branch: "main"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     reviewers:
       - "quortex/devops"
     rebase-strategy: "disabled"
@@ -15,7 +15,7 @@ updates:
     directory: "/"
     target-branch: "main"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     reviewers:
       - "quortex/devops"
     rebase-strategy: "disabled"
@@ -25,7 +25,7 @@ updates:
     directory: "/"
     target-branch: "main"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     reviewers:
       - "quortex/devops"
     rebase-strategy: "disabled"
